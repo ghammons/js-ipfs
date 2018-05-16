@@ -9,6 +9,7 @@ describe('interface-ipfs-core tests', () => {
   require('./bootstrap')
   require('./config')
   require('./files')
+  require('./files-mfs')
   require('./generic')
   require('./object')
   require('./dag')

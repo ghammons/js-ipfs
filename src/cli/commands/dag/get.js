@@ -41,7 +41,7 @@ module.exports = {
       // * reads as 'agree in'
       if (node._json) {
         delete node._json.multihash
-        node._json.data = '0x' + node._json.data.toString('hex')
+        node._json.data = node._json.data.toString('base64')
         print(JSON.stringify(node._json))
         return
       }

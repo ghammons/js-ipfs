@@ -16,7 +16,8 @@ const schema = Joi.object().keys({
   EXPERIMENTAL: Joi.object().keys({
     pubsub: Joi.boolean(),
     sharding: Joi.boolean(),
-    dht: Joi.boolean()
+    dht: Joi.boolean(),
+    mfs: Joi.boolean()
   }).allow(null),
   config: Joi.object().keys({
     Addresses: Joi.object().keys({

@@ -51,7 +51,8 @@ exports.getIPFS = (argv, callback) => {
     start: false,
     pass: argv.pass,
     EXPERIMENTAL: {
-      pubsub: true
+      pubsub: true,
+      mfs: true
     }
   })
 

@@ -120,6 +120,16 @@ class IPFS extends EventEmitter {
     if (this._options.EXPERIMENTAL.relay) {
       this.log('EXPERIMENTAL Relay is enabled')
     }
+    if (this._options.EXPERIMENTAL.mfs) {
+      this.log('EXPERIMENTAL mfs is enabled')
+      const mfs = components.mfs(this)
+
+      Object.keys(mfs).forEach(key => {
+        if (mfs.hasOwnProperty(key)) {
+          this.files[key] = mfs[key]
+        }
+      })
+    }
 
     this.state = require('./state')(this)
 
