@@ -1,6 +1,6 @@
 'use strict'
 
-const IPFS = require('ipfs')
+// const IPFS = require('ipfs')
 
 // Node
 const $nodeId = document.querySelector('.node-id')
@@ -22,6 +22,9 @@ const $allDisabledButtons = document.querySelectorAll('button:disabled')
 const $allDisabledInputs = document.querySelectorAll('input:disabled')
 const $allDisabledElements = document.querySelectorAll('.disabled')
 
+const FILES = []
+const workspace = location.hash
+
 let node
 let info
 let Buffer
@@ -33,6 +36,9 @@ let Buffer
 function start () {
   if (!node) {
     const options = {
+      EXPERIMENTAL: {
+        pubsub: true
+      },
       repo: 'ipfs-' + Math.random(),
       config: {
         Addresses: {
@@ -41,7 +47,8 @@ function start () {
       }
     }
 
-    node = new IPFS(options)
+    // node = new IPFS(options)
+    node = new window.Ipfs(options)
 
     Buffer = node.types.Buffer
 
@@ -54,8 +61,44 @@ function start () {
           setInterval(refreshPeerList, 1000)
         })
         .catch((error) => onError(err))
+
+      subscribeToWorkpsace()
     })
   }
+}
+
+/* ===========================================================================
+   Pubsub
+   =========================================================================== */
+
+const messageHandler = (message) => {
+  const myNode = info. id
+  const hash = message.data.toString()
+  const messageSender = message.from
+
+  console.log('my node id:', myNode)
+  console.log('received message from:', messageSender)
+  console.log('message is:', hash)
+
+  // append new files when someone uploads them
+  if (myNode !== messageSender && FILES.indexOf(hash) === -1) {
+    console.log(':: Append new file')
+    $multihashInput.value = hash
+    getFile()
+  }
+}
+
+const subscribeToWorkpsace = () => {
+  node.pubsub.subscribe(workspace, messageHandler)
+    .then(() => console.log(':: Subscribed to workspace:', workspace))
+}
+
+const publishHash = (hash) => {
+  const data = Buffer.from(hash)
+
+  node.pubsub.publish(workspace, data)
+    .then(() => console.log(':: Successfully published to workspace'))
+    .catch((error) => console.log(':: Error publishing:', error))
 }
 
 /* ===========================================================================
@@ -89,6 +132,9 @@ function appendFile (name, hash, size, data) {
   row.appendChild(downloadCell)
 
   $fileHistory.insertBefore(row, $fileHistory.firstChild)
+
+  FILES.push(hash)
+  publishHash(hash)
 }
 
 function getFile () {
